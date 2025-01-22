@@ -1,0 +1,94 @@
+Example 1:
+{
+    "name": "John Doe",
+    "age": 30,
+    "address": {
+        "street": "123 Main St",
+        "city": "Springfield"
+    },
+    "hobbies": ["reading", "traveling", "gaming"]
+}
+
+Example Output:
+
+name : John Doe
+age : 30
+address.street : 123 Main St
+address.city : Springfield
+hobbies[0] : reading
+hobbies[1] : traveling
+hobbies[2] : gaming
+
+
+Example 2:
+{
+  "contactinfo": {
+    "address": {
+      "city": "New York",
+      "zip": "10001"
+    },
+    "contact": {
+      "email": "test@gmail.com",
+      "phone": "24564646464"
+    }
+  },
+  "contacts": [
+    {
+      "type": "email",
+      "value": "john@example.com"
+    },
+    {
+      "type": "phone",
+      "value": "123-456-7890"
+    }
+  ]
+}
+
+Expected Output:
+
+contactinfo.address.city : New York
+contactinfo.address.zip : 10001
+contactinfo.contact.email : test@gmail.com
+contactinfo.contact.phone : 24564646464
+contacts[0].type : email
+contacts[0].value : john@example.com
+contacts[1].type : phone
+contacts[1].value : 123-456-7890
+
+Example 3:
+
+{
+  "personinfo": {
+	  "contactinfo": {
+		  "address": {
+			"city": "New York",
+			"zip": "10001"
+		  }
+		  "contact": {
+			"email": "test@gmail.com",
+			"phone": "24564646464"
+		  }
+		}
+  },
+  "contacts": [
+    {
+      "type": "email",
+      "value": "john@example.com"
+    },
+    {
+      "type": "phone",
+      "value": "123-456-7890"
+    }
+  ]
+}
+
+Expected Output:
+
+personinfo.contactinfo.address.city : New York
+personinfo.contactinfo.address.zip : 10001
+personinfo.contactinfo.contact.email : test@gmail.com
+personinfo.contactinfo.contact.phone : 24564646464
+contacts[0].type : email
+contacts[0].value : john@example.com
+contacts[1].type : phone
+contacts[1].value : 123-456-7890
