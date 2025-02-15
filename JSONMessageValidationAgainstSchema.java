@@ -1,45 +1,37 @@
 package com.example.jsonvalidation;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.networknt.schema.JsonSchema;
-import com.networknt.schema.JsonSchemaFactory;
-import com.networknt.schema.SchemaValidatorsConfig;
-import com.networknt.schema.ValidationMessage;
-import com.networknt.schema.SpecVersion;
+import org.everit.json.schema.Schema;
+import org.everit.json.schema.loader.SchemaLoader;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.Set;
+import java.io.FileInputStream;
+import java.io.InputStream;
 
 public class JSONMessageValidationAgainstSchema {
 
-    private static final ObjectMapper objectMapper = new ObjectMapper();
-    
     public static boolean validateJson(String jsonMessage, String schemaPath) {
-        try {
+        try (InputStream inputStream = new FileInputStream(new File(schemaPath))) {
             // Load JSON Schema
-            JsonSchemaFactory factory = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V7);
-            JsonSchema schema = factory.getSchema(new File(schemaPath));
+            JSONObject rawSchema = new JSONObject(new JSONTokener(inputStream));
+            Schema schema = SchemaLoader.load(rawSchema);
 
-            // Load JSON Message
-            JsonNode jsonNode = objectMapper.readTree(jsonMessage);
+            // Convert JSON message to JSONObject
+            JSONObject json = new JSONObject(jsonMessage);
 
             // Validate JSON
-            Set<ValidationMessage> errors = schema.validate(jsonNode);
+            schema.validate(json);
 
-            // Print Errors (if any)
-            if (!errors.isEmpty()) {
-                System.out.println("JSON Validation Failed:");
-                errors.forEach(error -> System.out.println(error.getMessage()));
-                return false;
-            }
-
-            System.out.println("JSON Validation Passed!");
+            System.out.println("✅ JSON Validation Passed!");
             return true;
 
-        } catch (IOException e) {
-            System.err.println("Error reading JSON or Schema: " + e.getMessage());
+        } catch (org.everit.json.schema.ValidationException e) {
+            System.out.println("❌ JSON Validation Failed!");
+            System.out.println(e.getAllMessages()); // Print all validation errors
+            return false;
+        } catch (Exception e) {
+            System.err.println("⚠️ Error: " + e.getMessage());
             return false;
         }
     }
