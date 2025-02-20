@@ -1,0 +1,17 @@
+// Import the uuid module
+const { v4: uuidv4 } = require('uuid');
+
+// Define your response logic
+const responseLogic = {
+    message: "This is the dynamic response!",
+    timestamp: new Date().toISOString(),
+    additionalInfo: "Hari, feel free to add more details here.",
+    cusipId: "FREX01000",
+    messageId: uuidv4(),  // Generates a unique UUID
+    originMessageTimestamp: "2024-09-08T20:03:41.621",
+    s3FilePath: "aws-sfn21-s3-us-east-1-bi-eksirsa-sfss-fe7332-fsp",
+    s3FileChecksum: "70ee1738b6b21e2c8a43f3a5ab0eee71"
+};
+
+// Export the response logic
+module.exports = responseLogic;
