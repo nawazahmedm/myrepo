@@ -5,9 +5,7 @@
   "defaultResponse": {
     "statusCode": 400,
     "body": "Bad Request !! Check URL or Payload !!",
-    "headers": {
-      "Content-Type": "application/json"
-    }
+    "headers": { "content-type": "application/json" }
   },
   "stubs": [
     {
@@ -24,10 +22,10 @@
           },
           "behaviors": [
             {
-              "decorate": "function(config, response) { const path = require('path'); const safeStringify = (obj) => { const seen = new WeakSet(); return JSON.stringify(obj, (key, value) => { if (typeof value === 'object' && value !== null) { if (seen.has(value)) return; seen.add(value); } return value; }); }; response.body = safeStringify(require(path.join('C://C59729/res/filename'))); }"
+              "decorate": "function(config, response) { const path = require('path'); const safeStringify = (obj) => { const seen = new WeakSet(); return JSON.stringify(obj, (key, value) => { if (typeof value === 'object' && value !== null) { if (seen.has(value)) return; seen.add(value); } return value; }); }; response.body = safeStringify(require(path.join(__dirname, 'wireresponselogic.js'))); }"
             },
             {
-              "wait": "function() { return response.imposterState.customWait || 10; }"
+              "wait": "function(request, response) { return (response && response.imposterState && response.imposterState.customWait) ? response.imposterState.customWait : 10; }"
             }
           ]
         }
