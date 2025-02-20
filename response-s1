@@ -15,3 +15,24 @@ const responseLogic = {
 
 // Export the response logic
 module.exports = responseLogic;
+
+
+--- Step2
+
+const { v4: uuidv4 } = require('uuid');
+
+const generateResponse = (requestBody) => {
+    return {
+        message: "This is the dynamic response!",
+        timestamp: new Date().toISOString(),
+        additionalInfo: "Hari, feel free to add more details here.",
+        cusipId: requestBody.cusipId || "DEFAULT_CUSIP",  // Extract from request or set default
+        messageId: uuidv4(),  // Generates a unique UUID
+        originMessageTimestamp: new Date().toISOString(),
+        s3FilePath: "aws-sfn21-s3-us-east-1-bi-eksirsa-sfss-fe7332-fsp",
+        s3FileChecksum: "70ee1738b6b21e2c8a43f3a5ab0eee71"
+    };
+};
+
+// Export the function to generate responses dynamically
+module.exports = generateResponse;
