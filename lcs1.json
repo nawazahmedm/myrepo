@@ -24,7 +24,7 @@
           },
           "behaviors": [
             {
-              "decorate": "function(config, response) { const safeStringify = (obj) => { const seen = new WeakSet(); return JSON.stringify(obj, (key, value) => { if (typeof value === 'object' && value !== null) { if (seen.has(value)) return; seen.add(value); } return value; }); }; response.body = safeStringify(require('./wireresponselogic.js')); }"
+              "decorate": "function(config, response) { const path = require('path'); const safeStringify = (obj) => { const seen = new WeakSet(); return JSON.stringify(obj, (key, value) => { if (typeof value === 'object' && value !== null) { if (seen.has(value)) return; seen.add(value); } return value; }); }; response.body = safeStringify(require(path.join('C://C59729/res/filename'))); }"
             },
             {
               "wait": "function() { return response.imposterState.customWait || 10; }"
