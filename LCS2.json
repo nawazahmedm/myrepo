@@ -1,0 +1,59 @@
+{
+  "port": 6571,
+  "protocol": "http",
+  "name": "LCS",
+  "defaultResponse": {
+    "statusCode": 400,
+    "body": "Bad Request !! Check URL or Payload !!",
+    "headers": { "content-type": "application/json" }
+  },
+  "stubs": [
+    {
+      "responses": [
+        {
+          "is": {
+            "statusCode": 200,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": {
+              "NOTE": "This part will be dynamically decorated !!"
+            }
+          },
+          "behaviors": [
+            {
+              "decorate": "function(config, response) { \
+                const path = require('path'); \
+                const logic = require(path.resolve(__dirname, 'wireresponselogic.js')); \
+                console.log('Processing request in wireresponselogic.js...'); \
+                try { \
+                  const requestBody = JSON.parse(config.request.body || '{}'); \
+                  const dynamicResponse = logic(requestBody); \
+                  response.body = dynamicResponse; \
+                } catch (error) { \
+                  console.error('Error processing response:', error); \
+                  response.body = { error: 'Internal Server Error' }; \
+                } \
+              }"
+            },
+            {
+              "wait": "function(request, response) { \
+                return (response && response.imposterState && response.imposterState.customWait) \
+                  ? response.imposterState.customWait \
+                  : 10; \
+              }"
+            }
+          ]
+        }
+      ],
+      "predicates": [
+        {
+          "equals": {
+            "path": "/LCS",
+            "method": "POST"
+          }
+        }
+      ]
+    }
+  ]
+}
