@@ -22,7 +22,7 @@
           },
           "behaviors": [
             {
-              "decorate": "function(config, response) { const path = require('path'); const safeStringify = (obj) => { const seen = new WeakSet(); return JSON.stringify(obj, (key, value) => { if (typeof value === 'object' && value !== null) { if (seen.has(value)) return; seen.add(value); } return value; }); }; response.body = safeStringify(require(path.join(__dirname, 'wireresponselogic.js'))); }"
+              "decorate": "function(config, response) { const path = require('path'); const logic = require(path.resolve(__dirname, 'wireresponselogic.js')); response.body = JSON.stringify(logic); }"
             },
             {
               "wait": "function(request, response) { return (response && response.imposterState && response.imposterState.customWait) ? response.imposterState.customWait : 10; }"
