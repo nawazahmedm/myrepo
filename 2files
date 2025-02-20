@@ -1,71 +1,75 @@
 // wireresponselogic.js
 
-// Define your response logic here
-const responseLogic = {
-    message: "This is the dynamic response!",
-    timestamp: new Date().toISOString(),
-    additionalInfo: "Feel free to add more details here."
-};
+const fs = require("fs");
+const uuid = require("uuid");
+const moment = require("moment");
 
-// Export the response logic
-module.exports = responseLogic;
-
-
----
-{
-  "port": 6571,
-  "protocol": "http",
-  "name": "LCS",
-  "defaultResponse": {
-    "statusCode": 400,
-    "body": "Bad Request !! Check URL or Payload !!",
-    "headers": { "content-type": "application/json" }
-  },
-  "stubs": [
-    {
-      "responses": [
-        {
-          "is": {
-            "statusCode": 200,
-            "headers": {
-              "Content-Type": "application/json"
-            },
-            "body": {
-              "NOTE": "This part will be dynamically decorated !!"
-            }
-          },
-          "behaviors": [
-            {
-              "decorate": "function(config, response) { 
-                const path = require('path'); 
-                try {
-                    const logic = require(path.resolve(__dirname, 'wireresponselogic.js'));
-                    console.log('Logic loaded:', logic);
-                    response.body = JSON.stringify(logic);
-                } catch (error) {
-                    console.error('Error loading logic:', error);
-                    response.body = JSON.stringify({ error: 'Internal Server Error' });
-                } 
-              }"
-            },
-            {
-              "wait": "function(request, response) { 
-                return (response && response.imposterState && response.imposterState.customWait) ? response.imposterState.customWait : 10; 
-              }"
-            }
-          ]
-        }
-      ],
-      "predicates": [
-        {
-          "equals": {
-            "path": "/LCS",
-            "method": "POST"
-          }
-        }
-      ]
-    }
-  ]
+function generateNumericId(length) {
+    return Math.floor(Math.random() * Math.pow(10, length)).toString().padStart(length, '0');
 }
 
+function generateCUSIP() {
+    // Sample CUSIP generation logic (you can replace it with your own)
+    return `${generateNumericId(6)}${String.fromCharCode(65 + Math.floor(Math.random() * 26))}`;
+}
 
+function generateRoutingNumber() {
+    // Sample ABA routing number generation logic
+    return generateNumericId(9);
+}
+
+function logic(request, response, logger) {
+    try {
+        logger.info("Incoming Request Body:", request.body);
+        let requestBody = JSON.parse(request.body || '{}');
+        let transactionId = requestBody.transactionId || uuid.v4();
+        let requestingSystem = requestBody.requestingSystem || "UnknownSystem";
+
+        let template = fs.readFileSync("responseTemplate.json", "utf-8");
+        if (!template) {
+            throw new Error("responseTemplate.json is empty or missing");
+        }
+        let responseTemplate = JSON.parse(template);
+
+        responseTemplate.transactionId = transactionId;
+        responseTemplate.requestingSystem = requestingSystem;
+
+        responseTemplate.securityWires = [...Array(Math.floor(Math.random() * 5) + 1)].map(() => ({
+            securityWirePoolIdentifier: `RPS${generateNumericId(4)}`,
+            securityWireCUSIPIdentifier: generateCUSIP(),
+            seriesNumber: generateNumericId(6),
+            contractIdentifier: uuid.v4(),
+            parentCUSIPIdentifier: generateCUSIP(),
+            wireGroupTotalProceedsAmount: Math.random() * 1000000,
+            wireGroupTotalSecurityFaceAmount: Math.random() * 5000000,
+            wires: [...Array(Math.floor(Math.random() * 3) + 1)].map(() => ({
+                securityWireProceedsAmount: Math.random() * 500000,
+                wireTransferIdentifier: uuid.v4(),
+                wireInstructionExecutionDate: moment().format("YYYY-MM-DD"),
+                wireTransferDirectionType: "Deliver",
+                wireReceiverAdviceInformation: "Advice Info Text",
+                securityClassCode: "FPC",
+                sender: {
+                    wirePartyRoleType: "Sender FinancialInstitution",
+                    abaRoutingAndTransitIdentifier: generateRoutingNumber(),
+                    financialInstitutionAccountIdentifier: generateNumericId(6),
+                    financialInstitutionAccountSubaccountName: generateNumericId(4),
+                },
+                receiver: {
+                    wirePartyRoleType: "Receiver FinancialInstitution",
+                    abaRoutingAndTransitIdentifier: generateRoutingNumber(),
+                    financialInstitutionAccountIdentifier: generateNumericId(8),
+                    financialInstitutionAccountSubaccountName: generateNumericId(5),
+                }
+            }))
+        }));
+
+        logger.info("Generated Response:", JSON.stringify(responseTemplate, null, 2));
+        response.status(200).json(responseTemplate); // Send the response
+    } catch (error) {
+        logger.error("Error processing response: " + error.message);
+        response.status(500).json({ error: "Failed to process request" }); // Handle errors
+    }
+}
+
+module.exports = logic; // Export the logic function
