@@ -25,8 +25,9 @@
               "decorate": "function(config, response) { \
                 const path = require('path'); \
                 const logic = require(path.resolve(__dirname, 'wireresponselogic.js')); \
+                console.log('Processing request in wireresponselogic.js...'); \
                 try { \
-                  const requestBody = JSON.parse(config.request.body); \
+                  const requestBody = config.request.body ? JSON.parse(config.request.body) : {}; \
                   console.log('Parsed Request Body:', requestBody); \
                   const dynamicResponse = logic(requestBody); \
                   response.body = JSON.stringify(dynamicResponse); \
@@ -34,6 +35,13 @@
                   console.error('Error processing response:', error); \
                   response.body = JSON.stringify({ error: 'Internal Server Error' }); \
                 } \
+              }"
+            },
+            {
+              "wait": "function(request, response) { \
+                return (response && response.imposterState && response.imposterState.customWait) \
+                  ? response.imposterState.customWait \
+                  : 10; \
               }"
             }
           ]
