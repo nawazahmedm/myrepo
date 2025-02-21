@@ -1,0 +1,34 @@
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.networknt.schema.JsonSchema;
+import com.networknt.schema.JsonSchemaFactory;
+import com.networknt.schema.SpecVersion;
+import com.networknt.schema.ValidationMessage;
+
+import java.io.InputStream;
+import java.util.Set;
+
+public class JsonValidator {
+    public static void main(String[] args) throws Exception {
+        // Load JSON schema
+        InputStream schemaStream = JsonValidator.class.getResourceAsStream("/schema.json");
+        JsonSchemaFactory schemaFactory = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V202012);
+        JsonSchema schema = schemaFactory.getSchema(schemaStream);
+
+        // Sample JSON data
+        String jsonData = "{ \"name\": \"John Doe\", \"age\": 30, \"email\": \"john.doe@example.com\", \"birthDate\": \"1990-01-01\", \"isActive\": true }";
+
+        // Parse JSON data
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode jsonNode = mapper.readTree(jsonData);
+
+        // Validate JSON data against the schema
+        Set<ValidationMessage> validationResult = schema.validate(jsonNode);
+
+        if (validationResult.isEmpty()) {
+            System.out.println("JSON is valid.");
+        } else {
+            validationResult.forEach(vm -> System.out.println(vm.getMessage()));
+        }
+    }
+}
