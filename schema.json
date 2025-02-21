@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft/2020-12/schema#",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "age": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "email": {
+      "type": "string",
+      "format": "email"
+    },
+    "birthDate": {
+      "type": "string",
+      "format": "date"
+    },
+    "isActive": {
+      "type": "boolean"
+    }
+  },
+  "required": ["name", "age", "email"]
+}
