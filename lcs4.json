@@ -1,0 +1,37 @@
+const { v4: uuidv4 } = require('uuid');
+const crypto = require('crypto');
+
+const generateChecksum = (data) => {
+    return crypto.createHash('md5').update(data).digest('hex');
+};
+
+const generateResponse = (requestBody) => {
+    console.log("Received requestBody:", requestBody);
+
+    if (!Array.isArray(requestBody)) {
+        return {
+            error: "Invalid input format. Expected an array of CUSIP IDs."
+        };
+    }
+
+    const responses = requestBody.map(cusipId => {
+        const responseData = {
+            message: "This is the dynamic response!",
+            timestamp: new Date().toISOString(),
+            additionalInfo: "Hari, feel free to add more details here.",
+            cusipId: cusipId,
+            messageId: uuidv4(),
+            originMessageTimestamp: new Date().toISOString(),
+            s3FilePath: "aws-sfn21-s3-us-east-1-bi-eksirsa-sfss-fe7332-fsp"
+        };
+
+        // Generate checksum based on response data
+        responseData.s3FileChecksum = generateChecksum(JSON.stringify(responseData));
+
+        return responseData;
+    });
+
+    return responses;
+};
+
+module.exports = generateResponse;
