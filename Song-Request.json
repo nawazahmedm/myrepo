@@ -1,0 +1,22 @@
+{
+    "port": 4545,
+    "protocol": "http",
+    "name": "Securities API",
+    "stubs": [
+        {
+            "predicates": [
+                {
+                    "equals": {
+                        "method": "POST",
+                        "path": "/securities"
+                    }
+                }
+            ],
+            "responses": [
+                {
+                    "inject": "require('./wireResponseLogic.js')"
+                }
+            ]
+        }
+    ]
+}
