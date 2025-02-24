@@ -86,22 +86,41 @@ public class XMLSchemaElementValidator {
 }
 
 
-<note>
-    <to>Tove</to>
-    <from>Jani</from>
-    <heading>Reminder</heading>
-    <body>Don't forget me this weekend!</body>
-</note>
+<?xml version="1.0" encoding="UTF-8"?>
+<Events xmlns="http://www.freddiemac.com/enterpriseeventdatamodel">
+    <EventMetaData>
+        <MessageIdentifier>95ad6cff-2204-4721-9d35-0a120ec626f4</MessageIdentifier>
+        <EventType>BUSINESS</EventType>
+        <EventName>CSPGateway PublicationfromCSS</EventName>
+        <EventClassification>NOTIFICATION</EventClassification>
+        <ProducerName>CSPGateway</ProducerName>
+        <MessageTimestamp>2024-04-01T06:29:53.462-04:00</MessageTimestamp>
+    </EventMetaData>
+</Events>
 
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
-    <xs:element name="note">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element name="to" type="xs:string"/>
-                <xs:element name="from" type="xs:string"/>
-                <xs:element name="heading" type="xs:string"/>
-                <xs:element name="body" type="xs:string"/>
-            </xs:sequence>
-        </xs:complexType>
-    </xs:element>
-</xs:schema>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://www.freddiemac.com/enterpriseeventdatamodel"
+            xmlns="http://www.freddiemac.com/enterpriseeventdatamodel"
+            elementFormDefault="qualified">
+
+    <xsd:element name="Events">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="EventMetaData">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="MessageIdentifier" type="xsd:string"/>
+                            <xsd:element name="EventType" type="xsd:string"/>
+                            <xsd:element name="EventName" type="xsd:string"/>
+                            <xsd:element name="EventClassification" type="xsd:string"/>
+                            <xsd:element name="ProducerName" type="xsd:string"/>
+                            <xsd:element name="MessageTimestamp" type="xsd:dateTime"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>
