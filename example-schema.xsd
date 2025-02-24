@@ -2,20 +2,23 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
            xmlns:evn="http://www.freddiemac.com/enterpriseeventdatamodel"
            xmlns:cap="http://www.cap.com/Securitization/cap-publication"
+           xmlns:cer="http://www.csp.com/Securitization/csp-entity-event-reporting"
            targetNamespace="http://www.freddiemac.com/enterpriseeventdatamodel"
-           elementFormDefault="qualified">
+           elementFormDefault="qualified"
+           attributeFormDefault="unqualified">
 
-    <!-- Root element -->
-    <xs:element name="Events">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element name="EventMetaData" type="evn:EventMetaDataType"/>
-                <xs:element name="EventPayload" type="evn:EventPayloadType"/>
-            </xs:sequence>
-        </xs:complexType>
-    </xs:element>
+    <!-- Root Element -->
+    <xs:element name="Events" type="evn:EventsType"/>
 
-    <!-- EventMetaData Type -->
+    <!-- Events Type -->
+    <xs:complexType name="EventsType">
+        <xs:sequence>
+            <xs:element name="EventMetaData" type="evn:EventMetaDataType"/>
+            <xs:element name="EventPayload" type="evn:EventPayloadType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- Event MetaData -->
     <xs:complexType name="EventMetaDataType">
         <xs:sequence>
             <xs:element name="MessageIdentifier" type="xs:string"/>
@@ -29,14 +32,14 @@
         </xs:sequence>
     </xs:complexType>
 
-    <!-- EventPayload Type -->
+    <!-- Event Payload -->
     <xs:complexType name="EventPayloadType">
         <xs:sequence>
             <xs:element name="EventContainer" type="evn:EventContainerType"/>
         </xs:sequence>
     </xs:complexType>
 
-    <!-- EventContainer Type -->
+    <!-- Event Container -->
     <xs:complexType name="EventContainerType">
         <xs:sequence>
             <xs:element name="EventIdentifier" type="xs:string"/>
@@ -45,7 +48,7 @@
         </xs:sequence>
     </xs:complexType>
 
-    <!-- BusinessContext Type -->
+    <!-- Business Context -->
     <xs:complexType name="BusinessContextType">
         <xs:sequence>
             <xs:element name="EntityIdentifier" type="xs:string"/>
@@ -55,20 +58,18 @@
             <xs:element name="PayloadReferenceType" type="xs:string"/>
             <xs:element name="RequestEffectiveDateTime" type="xs:dateTime"/>
             <xs:element name="BusinessEventTimestamp" type="xs:dateTime"/>
-
-            <!-- Nested CSPGatewayContext -->
             <xs:element name="CSPGatewayContext" type="evn:CSPGatewayContextType"/>
         </xs:sequence>
     </xs:complexType>
 
-    <!-- CSPGatewayContext Type -->
+    <!-- CSPGateway Context -->
     <xs:complexType name="CSPGatewayContextType">
         <xs:sequence>
             <xs:element name="CSPPublicationContext" type="evn:CSPPublicationContextType"/>
         </xs:sequence>
     </xs:complexType>
 
-    <!-- CSPPublicationContext Type -->
+    <!-- CSP Publication Context -->
     <xs:complexType name="CSPPublicationContextType">
         <xs:sequence>
             <xs:element name="PublicationType" type="xs:string"/>
@@ -76,32 +77,29 @@
         </xs:sequence>
     </xs:complexType>
 
-    <!-- BusinessData Type -->
+    <!-- Business Data -->
     <xs:complexType name="BusinessDataType">
         <xs:sequence>
             <xs:element name="CSSPayload" type="evn:CSSPayloadType"/>
         </xs:sequence>
     </xs:complexType>
 
-    <!-- CSSPayload Type -->
+    <!-- CSS Payload -->
     <xs:complexType name="CSSPayloadType">
         <xs:sequence>
-            <xs:element ref="cap:PUBLICATIONS"/>
+            <xs:element name="PUBLICATIONS" type="cap:PublicationsType"/>
         </xs:sequence>
     </xs:complexType>
 
-    <!-- PUBLICATIONS from cap namespace -->
-    <xs:element name="PUBLICATIONS" type="cap:PublicationsType" 
-                xmlns:cap="http://www.cap.com/Securitization/cap-publication"/>
-
-    <!-- PUBLICATIONS Type -->
+    <!-- Publications Type -->
     <xs:complexType name="PublicationsType">
         <xs:sequence>
-            <xs:element name="PUBLICATION" type="cap:PublicationType" maxOccurs="unbounded"/>
+            <xs:element name="PUBLICATION" type="cap:PublicationType"/>
         </xs:sequence>
+        <xs:attribute name="PublicationReferenceModelIdentifier" type="xs:string" use="required"/>
     </xs:complexType>
 
-    <!-- PUBLICATION Type -->
+    <!-- Publication Type -->
     <xs:complexType name="PublicationType">
         <xs:sequence>
             <xs:element name="PUBLICATION_HEADER" type="cap:PublicationHeaderType"/>
@@ -109,7 +107,7 @@
         </xs:sequence>
     </xs:complexType>
 
-    <!-- PUBLICATION_HEADER Type -->
+    <!-- Publication Header -->
     <xs:complexType name="PublicationHeaderType">
         <xs:sequence>
             <xs:element name="PublicationIdentifier" type="xs:string"/>
@@ -120,36 +118,36 @@
         </xs:sequence>
     </xs:complexType>
 
-    <!-- PUBLICATION_BODY Type -->
+    <!-- Publication Body -->
     <xs:complexType name="PublicationBodyType">
         <xs:sequence>
-            <xs:element name="ENTITY_REPORT" type="cap:EntityReportType"/>
+            <xs:element name="ENTITY_REPORT" type="cer:EntityReportType"/>
         </xs:sequence>
     </xs:complexType>
 
-    <!-- ENTITY_REPORT Type -->
+    <!-- Entity Report -->
     <xs:complexType name="EntityReportType">
         <xs:sequence>
-            <xs:element name="ENTITIES" type="cap:EntitiesType"/>
+            <xs:element name="ENTITIES" type="cer:EntitiesType"/>
         </xs:sequence>
     </xs:complexType>
 
-    <!-- ENTITIES Type -->
+    <!-- Entities -->
     <xs:complexType name="EntitiesType">
         <xs:sequence>
-            <xs:element name="ENTITY" type="cap:EntityType" maxOccurs="unbounded"/>
+            <xs:element name="ENTITY" type="cer:EntityType"/>
         </xs:sequence>
     </xs:complexType>
 
-    <!-- ENTITY Type -->
+    <!-- Entity -->
     <xs:complexType name="EntityType">
         <xs:sequence>
-            <xs:element name="ENTITY_DETAILS" type="cap:EntityDetailsType"/>
-            <xs:element name="ENTITY_STATE_DETAILS" type="cap:EntityStateDetailsType"/>
+            <xs:element name="ENTITY_DETAILS" type="cer:EntityDetailsType"/>
+            <xs:element name="ENTITY_STATE_DETAILS" type="cer:EntityStateDetailsType"/>
         </xs:sequence>
     </xs:complexType>
 
-    <!-- ENTITY_DETAILS Type -->
+    <!-- Entity Details -->
     <xs:complexType name="EntityDetailsType">
         <xs:sequence>
             <xs:element name="EntityNameType" type="xs:string"/>
@@ -158,14 +156,14 @@
         </xs:sequence>
     </xs:complexType>
 
-    <!-- ENTITY_STATE_DETAILS Type -->
+    <!-- Entity State Details -->
     <xs:complexType name="EntityStateDetailsType">
         <xs:sequence>
-            <xs:element name="DISCLOSURE_FILE" type="cap:DisclosureFileType"/>
+            <xs:element name="DISCLOSURE_FILE" type="cer:DisclosureFileType"/>
         </xs:sequence>
     </xs:complexType>
 
-    <!-- DISCLOSURE_FILE Type -->
+    <!-- Disclosure File -->
     <xs:complexType name="DisclosureFileType">
         <xs:sequence>
             <xs:element name="DocumentFileName" type="xs:string"/>
