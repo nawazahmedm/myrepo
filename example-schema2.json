@@ -1,0 +1,46 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "DocumentDelivery",
+  "description": "DocumentDelivery JSON Schema-The scope of this schema is to cover CSP interface 1.16.1, 4.7.1, 4.7.2, and 4.1.19, v1.0.0",
+  "properties": {
+    "documentDelivery": {
+      "$ref": "#/definitions/documentDelivery"
+    }
+  },
+  "type": "object",
+  "definitions": {
+    "documentDelivery": {
+      "additionalProperties": false,
+      "properties": {
+        "associatedDealType": {
+          "$ref": "#/definitions/associatedDealTypeEnumerated"
+        },
+        "associationName": {
+          "$ref": "#/definitions/associationNameEnumerated"
+        }
+      },
+      "type": "object"
+    },
+    "associatedDealTypeEnumerated": {
+      "enum": [
+        "ExcessServicingFeeStrip",
+        "Strip"
+      ],
+      "type": "string"
+    },
+    "associationNameEnumerated": {
+      "enum": [
+        "SecurityIssuanceDate",
+        "Structured TransactionDealIdentifier",
+        "DealType",
+        "GroupIdentifier",
+        "ProgramID",
+        "SecuritizationType",
+        "Security AmortizationType",
+        "SecurityCUSIPIdentifier",
+        "Issuer TrustIdentifier"
+      ],
+      "type": "string"
+    }
+  }
+}
