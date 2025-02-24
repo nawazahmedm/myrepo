@@ -2,12 +2,12 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "DocumentDelivery",
   "description": "DocumentDelivery JSON Schema-The scope of this schema is to cover CSP interface 1.16.1, 4.7.1, 4.7.2, and 4.1.19, v1.0.0",
+  "type": "object",
   "properties": {
     "documentDelivery": {
       "$ref": "#/definitions/documentDelivery"
     }
   },
-  "type": "object",
   "definitions": {
     "documentDelivery": {
       "additionalProperties": false,
@@ -17,6 +17,9 @@
         },
         "associationName": {
           "$ref": "#/definitions/associationNameEnumerated"
+        },
+        "documentMetadata": {
+          "$ref": "#/definitions/documentMetadata"
         }
       },
       "type": "object"
@@ -41,6 +44,31 @@
         "Issuer TrustIdentifier"
       ],
       "type": "string"
+    },
+    "documentMetadata": {
+      "additionalProperties": false,
+      "properties": {
+        "associatedIndicator": {
+          "type": "boolean"
+        },
+        "documentEffectiveDate": {
+          "type": "string",
+          "format": "date"
+        },
+        "publisherPublicationDateTime": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "age": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "type": "object"
     }
   }
 }
