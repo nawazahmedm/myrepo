@@ -14,6 +14,7 @@ class CustomJsonValidatorTest {
     @BeforeEach
     void setup() throws Exception {
         jsonSchemaFile = new ClassPathResource("example-schema.json").getFile();
+        jsonSchemaFile2 = new ClassPathResource("example-schema2.json").getFile();
     }
 
     @Test
@@ -57,5 +58,29 @@ class CustomJsonValidatorTest {
         Assertions.assertTrue(errors.contains("Validation error: #/email: [john.doeexample.com] is not a valid email address"));
         Assertions.assertTrue(errors.contains("Validation error: #/address/zipcode: string [12] does not match pattern ^[0-9]{5}$"));
         Assertions.assertTrue(errors.contains("Validation error: #/createdDate: [2023/04/01] is not a valid date-time. Expected [yyyy-MM-dd'T'HH:mm:ssZ, yyyy-MM-dd'T'HH:mm:ss.[0-9]{1,9}Z]"));
+    }
+
+    @Test
+    public void testInvalidEnumValue() throws Exception {
+        // JSON message with incorrect enum value
+        String jsonMessage = "{\n" +
+                "  \"documentDelivery\": {\n" +
+                "    \"associatedDealType\": \"InvalidType\",\n" +
+                "    \"associationNameValuePairs\": {},\n" +
+                "    \"documentBinaryData\": \"data\",\n" +
+                "    \"documentMetadata\": {}\n" +
+                "  }\n" +
+                "}";
+
+        // Load JSON schema
+        List<String> errors = CustomJsonValidator.validateJsonMessageAgainstSchema(jsonMessage, jsonSchemaFile2);
+
+        // Assert that there are validation errors
+        Assertions.assertFalse(errors.isEmpty());
+
+        Assertions.assertTrue(errors.contains("Validation error: #/documentDelivery/associatedDealType: InvalidType is not a valid enum value"));
+        Assertions.assertTrue(errors.contains("Validation error: #/documentDelivery: extraneous key [documentMetadata] is not permitted"));
+        Assertions.assertTrue(errors.contains("Validation error: #/documentDelivery: extraneous key [associationNameValuePairs] is not permitted"));
+        Assertions.assertTrue(errors.contains("Validation error: #/documentDelivery: extraneous key [documentBinaryData] is not permitted"));
     }
 }
