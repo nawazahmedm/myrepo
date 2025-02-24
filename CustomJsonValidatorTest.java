@@ -66,9 +66,16 @@ class CustomJsonValidatorTest {
         String jsonMessage = "{\n" +
                 "  \"documentDelivery\": {\n" +
                 "    \"associatedDealType\": \"InvalidType\",\n" +
+                "    \"associationName\": \"InvalidName\",\n" +
                 "    \"associationNameValuePairs\": {},\n" +
                 "    \"documentBinaryData\": \"data\",\n" +
-                "    \"documentMetadata\": {}\n" +
+                "    \"documentMetadata\": {\n" +
+                "      \"associatedIndicator\": true,\n" +
+                "      \"documentEffectiveDate\": \"2023-04-01\",\n" +
+                "      \"publisherPublicationDateTime\": \"2023-04-01T10:00:00Z\",\n" +
+                "      \"name\": \"John Doe\",\n" +
+                "      \"age\": 30\n" +
+                "    }\n" +
                 "  }\n" +
                 "}";
 
@@ -78,9 +85,44 @@ class CustomJsonValidatorTest {
         // Assert that there are validation errors
         Assertions.assertFalse(errors.isEmpty());
 
+        // Print out the validation errors
+        errors.forEach(System.out::println);
+
         Assertions.assertTrue(errors.contains("Validation error: #/documentDelivery/associatedDealType: InvalidType is not a valid enum value"));
-        Assertions.assertTrue(errors.contains("Validation error: #/documentDelivery: extraneous key [documentMetadata] is not permitted"));
+        Assertions.assertTrue(errors.contains("Validation error: #/documentDelivery/associationName: InvalidName is not a valid enum value"));
         Assertions.assertTrue(errors.contains("Validation error: #/documentDelivery: extraneous key [associationNameValuePairs] is not permitted"));
         Assertions.assertTrue(errors.contains("Validation error: #/documentDelivery: extraneous key [documentBinaryData] is not permitted"));
+    }
+
+    @Test
+    public void testInvalidDocumentMetadata() throws Exception {
+        // JSON message with invalid data for documentMetadata
+        String jsonMessage = "{\n" +
+                "  \"documentDelivery\": {\n" +
+                "    \"associatedDealType\": \"ExcessServicingFeeStrip\",\n" +
+                "    \"associationName\": \"SecurityIssuanceDate\",\n" +
+                "    \"documentMetadata\": {\n" +
+                "      \"associatedIndicator\": \"invalidBoolean\",\n" + // Invalid boolean
+                "      \"documentEffectiveDate\": \"invalidDate\",\n" + // Invalid date format
+                "      \"publisherPublicationDateTime\": \"invalidDateTime\",\n" + // Invalid date-time format
+                "      \"name\": \"\",\n" + // Invalid empty name
+                "      \"age\": -1\n" + // Invalid age less than 0
+                "    }\n" +
+                "  }\n" +
+                "}";
+
+        // Load JSON schema
+        List<String> errors = CustomJsonValidator.validateJsonMessageAgainstSchema(jsonMessage, jsonSchemaFile2);
+
+        // Assert that there are validation errors
+        Assertions.assertFalse(errors.isEmpty());
+
+        // Print out the validation errors
+        errors.forEach(System.out::println);
+
+        Assertions.assertTrue(errors.contains("Validation error: #/documentDelivery/documentMetadata/associatedIndicator: expected type: Boolean, found: String"));
+        Assertions.assertTrue(errors.contains("Validation error: #/documentDelivery/documentMetadata/name: expected minLength: 1, actual: 0"));
+        Assertions.assertTrue(errors.contains("Validation error: #/documentDelivery/documentMetadata/publisherPublicationDateTime: [invalidDateTime] is not a valid date-time. Expected [yyyy-MM-dd'T'HH:mm:ssZ, yyyy-MM-dd'T'HH:mm:ss.[0-9]{1,9}Z]"));
+        Assertions.assertTrue(errors.contains("Validation error: #/documentDelivery/documentMetadata/age: -1.0 is not higher or equal to 0"));
     }
 }
