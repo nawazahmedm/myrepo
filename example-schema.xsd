@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:evn="http://www.freddiemac.com/enterpriseeventdatamodel"
+           xmlns:cd="http://www.cap.com/document"
+           targetNamespace="http://www.freddiemac.com/enterpriseeventdatamodel"
+           elementFormDefault="qualified">
+
+    <!-- Root Element -->
+    <xs:element name="Events">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="EventMetaData">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="MessageIdentifier" type="xs:string"/>
+                            <xs:element name="EventType" type="xs:string"/>
+                            <xs:element name="EventName" type="xs:string"/>
+                            <xs:element name="EventClassification" type="xs:string"/>
+                            <xs:element name="ProducerName" type="xs:string"/>
+                            <xs:element name="MessageTimestamp" type="xs:dateTime"/>
+                            <xs:element name="HashValue" type="xs:string"/>
+                            <xs:element name="EventCount" type="xs:int"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+
+                <xs:element name="EventPayload">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="EventContainer">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="EventIdentifier" type="xs:string"/>
+                                        
+                                        <xs:element name="BusinessContext">
+                                            <xs:complexType>
+                                                <xs:sequence>
+                                                    <xs:element name="EntityIdentifier" type="xs:string"/>
+                                                    <xs:element name="EntityType" type="xs:string"/>
+                                                    <xs:element name="RequestActionType" type="xs:string"/>
+                                                    <xs:element name="PayloadByReference" type="xs:boolean"/>
+                                                    <xs:element name="PayloadReferenceType" type="xs:string"/>
+                                                    <xs:element name="RequestEffectiveDateTime" type="xs:dateTime"/>
+                                                    <xs:element name="BusinessEventTimestamp" type="xs:dateTime"/>
+
+                                                    <xs:element name="CSPGatewayContext" type="evn:CSPGatewayContextType"/>
+                                                </xs:sequence>
+                                            </xs:complexType>
+                                        </xs:element>
+
+                                        <xs:element name="BusinessData">
+                                            <xs:complexType>
+                                                <xs:sequence>
+                                                    <xs:element name="CSSPayload" type="evn:CSSPayloadType"/>
+                                                </xs:sequence>
+                                            </xs:complexType>
+                                        </xs:element>
+
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- CSPGatewayContext -->
+    <xs:complexType name="CSPGatewayContextType">
+        <xs:sequence>
+            <xs:element name="CSPPublicationContext">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="PublicationType" type="xs:string"/>
+                        <xs:element name="PublicationTypeVersion" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- CSSPayload -->
+    <xs:complexType name="CSSPayloadType">
+        <xs:sequence>
+            <xs:element name="PUBLICATIONS" type="evn:PublicationsType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- Publications -->
+    <xs:complexType name="PublicationsType">
+        <xs:sequence>
+            <xs:element name="PUBLICATION">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="PUBLICATION_HEADER">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element name="PublicationIdentifier" type="xs:string"/>
+                                    <xs:element name="PublicationActionType" type="xs:string"/>
+                                    <xs:element name="PublicationCreatedDateTime" type="xs:dateTime"/>
+                                    <xs:element name="PublicationType" type="xs:string"/>
+                                    <xs:element name="PublicationTypeVersion" type="xs:string"/>
+                                </xs:sequence>
+                            </xs:complexType>
+                        </xs:element>
+
+                        <xs:element name="PUBLICATION_BODY">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element name="ENTITY_REPORT" type="evn:EntityReportType"/>
+                                </xs:sequence>
+                            </xs:complexType>
+                        </xs:element>
+
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- ENTITY_REPORT -->
+    <xs:complexType name="EntityReportType">
+        <xs:sequence>
+            <xs:element name="ENTITIES">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="ENTITY">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element name="ENTITY_DETAILS">
+                                        <xs:complexType>
+                                            <xs:sequence>
+                                                <xs:element name="EntityNameType" type="xs:string"/>
+                                                <xs:element name="EntityStateChangeTimeStamp" type="xs:dateTime"/>
+                                                <xs:element name="EntityStateType" type="xs:string"/>
+                                            </xs:sequence>
+                                        </xs:complexType>
+                                    </xs:element>
+
+                                    <xs:element name="ENTITY_STATE_DETAILS">
+                                        <xs:complexType>
+                                            <xs:sequence>
+                                                <xs:element name="DISCLOSURE_FILE">
+                                                    <xs:complexType>
+                                                        <xs:sequence>
+                                                            <xs:element name="DocumentFileName" type="xs:string"/>
+                                                            <xs:element name="DocumentFormatType" type="xs:string"/>
+                                                            <xs:element name="DocumentPublishDate" type="xs:date"/>
+                                                            <xs:element name="DocumentSumCount" type="xs:int"/>
+                                                            <xs:element name="DocumentType" type="xs:string"/>
+                                                            <xs:element name="PublicationDateTime" type="xs:dateTime"/>
+                                                        </xs:sequence>
+                                                    </xs:complexType>
+                                                </xs:element>
+                                            </xs:sequence>
+                                        </xs:complexType>
+                                    </xs:element>
+
+                                </xs:sequence>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+</xs:schema>
